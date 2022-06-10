@@ -6,7 +6,7 @@
 #include <iostream>
 using namespace std;
 #define LED 0
-
+//small project to display it is possible to get data from a zigbee
 int main(void)
 {
  wiringPiSetup();
