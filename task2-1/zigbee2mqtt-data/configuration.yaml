@@ -1,0 +1,26 @@
+permit_join: true
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://mqtt
+serial:
+  port: /dev/ttyUSB0
+frontend:
+  port: 8080
+advanced:
+  network_key:
+    - 137
+    - 106
+    - 134
+    - 94
+    - 250
+    - 89
+    - 177
+    - 111
+    - 36
+    - 159
+    - 136
+    - 110
+    - 18
+    - 44
+    - 99
+    - 166
