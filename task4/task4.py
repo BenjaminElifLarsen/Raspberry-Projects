@@ -5,6 +5,6 @@ device = XBeeDevice("/dev/ttyUSb0", 9600)
 
 device.open()
 
-for n in range(50)
+for n in range(50):
   device.send_data_broadcast("Test")
 
