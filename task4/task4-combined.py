@@ -44,6 +44,8 @@ device.open()
 #take any data from the XBee and transmit to the mqtt
 while(True): 
     message = device.read_data()
-    client.publish("nej", payload=message, qos=1)
+    data = message.data
+    mes = data.decode()
+    client.publish("nej", payload=mes, qos=1)
 
 device.close()
