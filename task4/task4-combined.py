@@ -27,8 +27,6 @@ client.on_connect = on_connect
 client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
 
 
-client.username_pw_set("BelNej", "Test123123")
-
 client.connect("localhost", 1883)
 
 client.on_subscribe = on_subscribe
