@@ -24,7 +24,7 @@ def on_message(client, userdata, msg):
 client = paho.Client(client_id="Raspberry Pi", userdata=None, protocol=paho.MQTTv5)
 client.on_connect = on_connect
 
-client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
+#client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
 
 
 client.connect("localhost", 1883)
