@@ -1,7 +1,8 @@
-
 import time
 import paho.mqtt.client as paho
 from paho import mqtt
+
+from digi.xbee.devices import XBeeDevice
 
 
 # setting callbacks for different events to see if it works, print the message etc.
@@ -28,7 +29,7 @@ client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
 
 client.username_pw_set("BelNej", "Test123123")
 
-client.connect("0f85d3fd0e37472da28182508a3e7572.s2.eu.hivemq.cloud", 8883)
+client.connect("mqtt", 1883)
 
 client.on_subscribe = on_subscribe
 client.on_message = on_message
@@ -36,7 +37,9 @@ client.on_publish = on_publish
 
 client.subscribe("nej", qos=1)
 
-client.publish("nej", payload="Yep, nej is neat", qos=1)
+#client.publish("nej", payload="Yep, nej is neat", qos=1)
 
-
-client.loop_forever()
+#take any data from the XBee and transmit to the mqtt
+while(True): 
+    message = device.read_data()
+    client.publish("nej", payload=message, qos=1)
