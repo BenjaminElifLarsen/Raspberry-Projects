@@ -1,7 +1,7 @@
 from digi.xbee.devices import XBeeDevice
 
 
-device = XBeeDevice("/dev/ttyUSb0", 9600)
+device = XBeeDevice("/dev/ttyUSB0", 9600)
 
 device.open()
 
