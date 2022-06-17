@@ -39,7 +39,13 @@ client.subscribe("nej", qos=1)
 
 #client.publish("nej", payload="Yep, nej is neat", qos=1)
 
+
+device = XBeeDevice("/dev/ttyUSB0", 9600)
+
+device.open()
 #take any data from the XBee and transmit to the mqtt
 while(True): 
     message = device.read_data()
     client.publish("nej", payload=message, qos=1)
+
+device.close()
