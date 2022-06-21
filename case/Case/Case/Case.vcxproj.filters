@@ -21,6 +21,12 @@
     <ClInclude Include="__vm\.Case.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Definitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FlashPromp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="app_api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -30,11 +36,11 @@
     <ClInclude Include="avr8-stub.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Definitions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FlashPromp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="app_api.c">
       <Filter>Source Files</Filter>
     </ClCompile>

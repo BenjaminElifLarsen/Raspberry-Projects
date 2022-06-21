@@ -1,7 +1,7 @@
 #pragma once
 
 
-typedef void (*Function_Pointer)(char*);
+typedef void (*Function_Pointer)(void);
 
 typedef enum
 {
@@ -14,7 +14,6 @@ typedef enum
 typedef struct {
 	MachineStates MachineState;
 	Function_Pointer FunctionPointer;
-	uint8_t LEDPort;
-	char LEDPort_String[5];
+	char LEDPort_String[7];
 	uint8_t LEDBitLocation;
 } MachineStateStruct;
