@@ -34,4 +34,10 @@ The arduino will turn a red led on when it is in idle mode. A yellow when it is 
 The project could be improved by having two HC-SR04 sensors that it can use to figure out the 'direction' of the movement and thus if the movement is entering or leaving the room.
 
 
- 
+Consider:
+When the HC is read, it will activate a timer on an interrupt and change state to idle. 
+When the timer is triggered it will switch the machine state to read temperature. 
+Then when the temperature is read the code will switch state to transmit.
+When the data has been transmitted it will switch state to idle.
+Instead of having the a state for reading from the HC let the code run as part of the idle state (or remove the idle state since the program is not idle).
+If the HC is read and the timer is active, deactivate the timer.
