@@ -1,0 +1,37 @@
+use mosquitto
+use raspberry pi 
+use arduino
+use zigbee/xbee (x2)
+use led (3)
+
+measurements:
+temperature?
+dht?
+
+
+triggers:
+hc-sr04?
+voltage dividing?
+
+
+when someone is 'in' the room, it transmit the temperature to the raspberry pi,
+which stores it in mqtt.
+
+Case:
+Temperature control. E.g. in someone's home or room to ensure temperature is only regulated when it is required. This could be turning on fans or radiators. 
+This case will only develop a small part of the full project. In this case it is the part of the system that reads the temperature when someone is present in the location the system is in.
+
+The Idea:
+The arduino will be checking if something/someone moves past the HC-SR04.
+It will then start collecting information from a temperature sensor and transmit it to the raspberry pi.
+The communication will use the ZigBee via XBee.
+The raspberry pi will then collect the transmitted data and transfer it over to mqtt Mosquitto.
+When the arduino reads that someone/something moves past the HC-SR04 again it will stop transmitting.
+
+The arduino will turn a red led on when it is in idle mode. A yellow when it is active from someone passing by. A green led when it is transmitting.
+
+
+The project could be improved by having two HC-SR04 sensors that it can use to figure out the 'direction' of the movement and thus if the movement is entering or leaving the room.
+
+
+ 
