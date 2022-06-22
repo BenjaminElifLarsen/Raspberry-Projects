@@ -1,6 +1,6 @@
 
-//#include <XBee.h>
-//#include <Printers.h>
+#include <XBee.h>
+#include <Printers.h>
 
 //#define USE_SERIAL Serial2
 
