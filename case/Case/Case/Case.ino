@@ -16,12 +16,17 @@ static volatile MachineStates State = IDLE;
 static volatile MachineStateStruct WorkingStruct;
 
 int tempPin = 15;
+float temperature = 0;
  
 #define ECHO_PORT "2E"
 #define ECHO_BIT 4 //bit //PE4 // D2
 int ECHO = 2; //only here because of PulseIn function call
 #define TRIG_PORT "2E" 
 #define TRIG_BIT 3 //bit //PE5 // D3
+int TRIG = 3;
+
+#define RANGE_MIN 10
+#define RANGE_MAX 100
 
 static volatile bool EndOfStateMachine = false;
 
@@ -37,21 +42,28 @@ void IdleState(void)
 
 int ReadHCSR04(void)
 {
-	//digitalWrite(TRIG, 0); //convert to c 
-	PortManipulation(TRIG_PORT, TRIG_BIT, 0);
+	digitalWrite(TRIG, 0); //convert to c 
+	//PortManipulation(TRIG_PORT, TRIG_BIT, 0);
 	delayMicroseconds(2);
-	//digitalWrite(TRIG, 1);
-	PortManipulation(TRIG_PORT, TRIG_BIT, 1);
+	digitalWrite(TRIG, 1);
+	//PortManipulation(TRIG_PORT, TRIG_BIT, 1);
 	delayMicroseconds(10);
-	//digitalWrite(TRIG, 0);
-	PortManipulation(TRIG_PORT, TRIG_BIT, 0);
+	digitalWrite(TRIG, 0);
+	//PortManipulation(TRIG_PORT, TRIG_BIT, 0);
 	long duration = pulseIn(ECHO, 1);
 	return duration * 0.034 / 2;
 }
 
 void DistanceHandling(void)
 {
-	ReadHCSR04();
+	while (IDLE == State) 
+	{
+		int distance = ReadHCSR04();
+		if (10 <= distance && 100 >= distance)
+		{
+			State = READING_TEMPERATURE;
+		}
+	}
 }
 
 float ReadTemperature(void) 
@@ -63,17 +75,19 @@ float ReadTemperature(void)
 
 void TemperatureHandling(void)
 {
-	ReadTemperature();
+	temperature = ReadTemperature();
+	State = TRANSMITTING_DATA;
 }
 
 void TransmitTemperature(void)
 {
-	
+	//Xbee call
 }
 
 void DataTransmission(void)
 {
 	TransmitTemperature();
+	State = IDLE;
 }
 
 const MachineStateStruct PROGMEM MachineStateStructArray[] =
@@ -111,19 +125,21 @@ void PortManipulation(char* address_string, uint8_t position, uint8_t value)
 	}
 }
 
-void setup() {
+void setup() 
+{
 	USE_SERIAL.begin(9600);
 	debug_init();
 	delay(3000);
-	PortManipulation("25", 3, 1);
-	//pinMode(TRIG, OUTPUT); //move over to C code later
-	PortManipulation(ECHO_PORT, ECHO_BIT, 1);
-	//pinMode(ECHO, INPUT);
+	//PortManipulation("25", 3, 1);
+	pinMode(TRIG, OUTPUT); //move over to C code later
+	//PortManipulation(ECHO_PORT, ECHO_BIT, 1);
+	pinMode(ECHO, INPUT);
 }
 
-void loop() {
+void loop() 
+{
 
 	//USE_SERIAL.println(ReadTemperature());
-	USE_SERIAL.println(ReadHCSR04());
-	delay(1000);
+	//USE_SERIAL.println(ReadHCSR04());
+	//delay(1000);
 }
