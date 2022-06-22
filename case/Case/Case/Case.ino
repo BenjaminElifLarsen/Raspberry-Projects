@@ -1,8 +1,10 @@
 
-#include <XBee.h>
-#include <Printers.h>
+//#include <XBee.h>
+//#include <Printers.h>
 
-#define USE_SERIAL Serial2
+//#define USE_SERIAL Serial2
+
+#include <Ticker.h>
 
 #include "Definitions.h"
 #include "FlashPromp.h"
@@ -11,12 +13,26 @@
 #include "avr8-stub.h"
 #include "app_api.h"
 
+void ChangeState(void);
+void PermitRead(void);
+
+ int TIMER_CHANGE_STATE_MS = 10000;
+ int TIMER_HC_DELAY_MS = 2000;
+Ticker timerTemp(ChangeState, TIMER_CHANGE_STATE_MS,0);
+Ticker timerRead(PermitRead, TIMER_HC_DELAY_MS, 1);
+volatile bool TimerTempActive = false;
+
+volatile bool CanReadHC;
 
 static volatile MachineStates State = IDLE;
-static volatile MachineStateStruct WorkingStruct;
+MachineStateStruct* MachineStateInRAM_Pointer;
+
+volatile bool HC_LED = 53;
+volatile bool TEMP_LED = 52;
+volatile bool TRANSMIT_LED = 51;
 
 int tempPin = 15;
-float temperature = 0;
+volatile float temperature = 0;
  
 #define ECHO_PORT "2E"
 #define ECHO_BIT 4 //bit //PE4 // D2
@@ -32,12 +48,31 @@ static volatile bool EndOfStateMachine = false;
 
 int my_putc(char c, FILE* t)
 {
-	USE_SERIAL.write(c);
+	//USE_SERIAL.write(c);
 }
 
 void IdleState(void)
 {
 	State = IDLE;
+}
+
+void TimerUpdates(void)
+{
+	timerRead.update();
+	timerTemp.update();
+}
+
+void ChangeState(void)
+{
+	uint8_t stateInt = (int)State;
+	stateInt = (++stateInt) % UNKNOWN_STATE;
+	State = (MachineStates)stateInt;
+}
+
+void PermitRead(void) 
+{
+	CanReadHC = true;
+	timerRead.stop();
 }
 
 int ReadHCSR04(void)
@@ -56,12 +91,24 @@ int ReadHCSR04(void)
 
 void DistanceHandling(void)
 {
-	while (IDLE == State) 
+	while (IDLE == State && true == CanReadHC) 
 	{
+		TimerUpdates();
 		int distance = ReadHCSR04();
 		if (10 <= distance && 100 >= distance)
 		{
-			State = READING_TEMPERATURE;
+			CanReadHC = false;
+			timerRead.start();
+			if (!TimerTempActive) {
+				timerTemp.start();
+				TimerTempActive = true;
+			}
+			else {
+				timerTemp.stop();
+				TimerTempActive = false;
+			}
+			//ChangeState(); //replace with activating a timer on an interrupt. The current call is just for testing.
+			//have another time that need to be run ones before it is possible to deactivate the first timer.
 		}
 	}
 }
@@ -75,8 +122,9 @@ float ReadTemperature(void)
 
 void TemperatureHandling(void)
 {
+	State = READING_TEMPERATURE;
 	temperature = ReadTemperature();
-	State = TRANSMITTING_DATA;
+	ChangeState();
 }
 
 void TransmitTemperature(void)
@@ -87,7 +135,7 @@ void TransmitTemperature(void)
 void DataTransmission(void)
 {
 	TransmitTemperature();
-	State = IDLE;
+	ChangeState();
 }
 
 const MachineStateStruct PROGMEM MachineStateStructArray[] =
@@ -103,43 +151,43 @@ MachineStateStruct* StateAllocateMemoryInRamAndGetCopyFromFlashProm()
 	memcpy_FlashProm((char*)MachineStructInRAM_Pointer, (const char*)&(MachineStateStructArray[(uint8_t)State]), sizeof(MachineStateStruct));
 }
 
-void PortManipulation(char* address_string, uint8_t position, uint8_t value)
-{
-	uint8_t* address_Pointer;
-
-	address_Pointer = (uint8_t*)(uint16_t)strtoul((const char*)address_string, NULL, 16);
-
-	if (0 == value)
-	{
-		uint8_t* ddr = address_Pointer;
-		ddr--;
-		*ddr &= ~(1 << position);
-		*address_Pointer &= ~(1 << position);
-	}
-	else
-	{
-		uint8_t* ddr = address_Pointer;
-		ddr--;
-		*ddr |= 1 << position;
-		*address_Pointer |= 1 << position;
-	}
-}
+//void PortManipulation(char* address_string, uint8_t position, uint8_t value)
+//{
+//	uint8_t* address_Pointer;
+//
+//	address_Pointer = (uint8_t*)(uint16_t)strtoul((const char*)address_string, NULL, 16);
+//
+//	if (0 == value)
+//	{
+//		uint8_t* ddr = address_Pointer;
+//		ddr--;
+//		*ddr &= ~(1 << position);
+//		*address_Pointer &= ~(1 << position);
+//	}
+//	else
+//	{
+//		uint8_t* ddr = address_Pointer;
+//		ddr--;
+//		*ddr |= 1 << position;
+//		*address_Pointer |= 1 << position;
+//	}
+//}
 
 void setup() 
 {
-	USE_SERIAL.begin(9600);
+	//USE_SERIAL.begin(9600);
 	debug_init();
 	delay(3000);
-	//PortManipulation("25", 3, 1);
-	pinMode(TRIG, OUTPUT); //move over to C code later
-	//PortManipulation(ECHO_PORT, ECHO_BIT, 1);
-	pinMode(ECHO, INPUT);
+	////PortManipulation("25", 3, 1);
+	//pinMode(TRIG, OUTPUT); //move over to C code later
+	////PortManipulation(ECHO_PORT, ECHO_BIT, 1);
+	//pinMode(ECHO, INPUT);
+	CanReadHC = true;
 }
 
 void loop() 
 {
-
-	//USE_SERIAL.println(ReadTemperature());
-	//USE_SERIAL.println(ReadHCSR04());
-	//delay(1000);
+	TimerUpdates();
+	MachineStateInRAM_Pointer = StateAllocateMemoryInRamAndGetCopyFromFlashProm();
+	MachineStateInRAM_Pointer->FunctionPointer();
 }

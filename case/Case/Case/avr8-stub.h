@@ -240,7 +240,7 @@ extern "C" {
  * don't put it into parentheses.
  */
 #ifndef AVR8_UART_NUMBER
-        #define AVR8_UART_NUMBER       3
+        #define AVR8_UART_NUMBER       0
 #endif
 
 /**
