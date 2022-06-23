@@ -49,11 +49,13 @@ while(True):
         remote = message.remote_device
         print("Remote: ")
         print(remote)
-        mes = data.decode()
-        print("Got data: ")
-        print(mes)
-        client.connect("localhost",1883)
-        client.publish("temp", payload=mes, qos=1)
-        client.disconnect()
-        
+        if remote == "0013A2004106F9FC -":
+            mes = data.decode()
+            print("Got data: ")
+            print(mes)
+            client.connect("localhost",1883)
+            client.publish("temp", payload=mes, qos=1)
+            client.disconnect()
+        else:
+            print("NOT PERMITTED")
 device.close()
