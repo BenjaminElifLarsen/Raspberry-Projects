@@ -18,8 +18,8 @@ def on_publish(client, userdata, mid, properties=None):
 #    print("Subscribed: " + str(mid) + " " + str(granted_qos))
 
 # print message, useful for checking if it was successful
-#def on_message(client, userdata, msg):
-#    print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+def on_message(client, userdata, msg):
+    print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
 client = paho.Client(client_id="Raspberry Pi", userdata=None, protocol=paho.MQTTv5)
 client.on_connect = on_connect
@@ -30,7 +30,7 @@ client.on_connect = on_connect
 #client.connect("localhost", 1883)
 
 #client.on_subscribe = on_subscribe
-#client.on_message = on_message
+client.on_message = on_message
 client.on_publish = on_publish
 
 #client.subscribe("nej", qos=1)
@@ -47,6 +47,7 @@ while(True):
     if message != None: #check if the message is from a trusted MAC.
         data = message.data
         mes = data.decode()
+        print("Got data: ")
         print(mes)
         client.connect("localhost",1883)
         client.publish("temp", payload=mes, qos=1)
