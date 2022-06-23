@@ -50,7 +50,7 @@ while(True):
         print("Remote: ")
         print(remote)
         print(type(remote))
-        if remote == 0x0013A2004106F9FC:
+        if remote == "0013a2004106f9fc":
             mes = data.decode()
             print("Got data: ")
             print(mes)
