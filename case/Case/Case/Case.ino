@@ -143,7 +143,14 @@ void TransmitTemperature(void)
 {
 	//Xbee call
 	XBeeAddress64 addr64 = XBeeAddress64(ADDRESS_HIGH,ADDRESS_LOW);
-	uint8_t payload[] = { (uint8_t)temperature };
+
+	char tempChar[7];
+	dtostrf(temperature, 4, 4, tempChar);
+
+	uint8_t payload[7];
+	for (int i = 0; i < sizeof(payload); i++) {
+		payload[i] = tempChar[i];
+	}
 	ZBTxRequest zbTx = ZBTxRequest(addr64,payload, sizeof(payload));
 	xbee.send(zbTx);
 	if (!xbee.readPacket(2500)) {
