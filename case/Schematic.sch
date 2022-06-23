@@ -8240,6 +8240,63 @@ Source: MaxStream, Inc. xbee_productmanual.pdf</description>
 </deviceset>
 </devicesets>
 </library>
+<library name="Ultrasonic Sensor HC-SR04">
+<description>Ultrasonic Sensor HC-SR04</description>
+<packages>
+<package name="HC-SR04_FOOTPRINT">
+<description>Ultrasonic Sensor HC-SR04 Footprint</description>
+<pad name="ECHO" x="0" y="1.27" drill="0.9" diameter="1.778"/>
+<pad name="TRIG" x="0" y="-1.27" drill="0.9" diameter="1.778"/>
+<pad name="VCC" x="0" y="-3.81" drill="0.9" diameter="1.778"/>
+<pad name="GND" x="0" y="3.81" drill="0.9" diameter="1.778" shape="square"/>
+<wire x1="-1.27" y1="5.08" x2="-1.27" y2="-5.08" width="0.127" layer="21"/>
+<wire x1="-1.27" y1="-5.08" x2="1.27" y2="-5.08" width="0.127" layer="21"/>
+<wire x1="1.27" y1="-5.08" x2="1.27" y2="5.08" width="0.127" layer="21"/>
+<wire x1="1.27" y1="5.08" x2="-1.27" y2="5.08" width="0.127" layer="21"/>
+<text x="1.397" y="3.556" size="0.6096" layer="21">GND</text>
+<text x="1.397" y="1.016" size="0.6096" layer="21">Echo</text>
+<text x="1.397" y="-1.524" size="0.6096" layer="21">Trig</text>
+<text x="1.397" y="-4.064" size="0.6096" layer="21">VCC</text>
+<text x="-2.032" y="-5.08" size="1.016" layer="25" ratio="12" rot="R90">&gt;NAME</text>
+</package>
+</packages>
+<symbols>
+<symbol name="HC-SR04_SYMBOL">
+<description>Ultrasonic Sensor HC-SR04 Schematic</description>
+<pin name="GND" x="-12.7" y="7.62" length="middle"/>
+<pin name="ECHO" x="-12.7" y="2.54" length="middle"/>
+<pin name="TRIG" x="-12.7" y="-2.54" length="middle"/>
+<pin name="5V" x="-12.7" y="-7.62" length="middle"/>
+<wire x1="-7.62" y1="10.16" x2="-7.62" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="-10.16" x2="2.54" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="2.54" y1="-10.16" x2="2.54" y2="10.16" width="0.254" layer="94"/>
+<wire x1="2.54" y1="10.16" x2="-7.62" y2="10.16" width="0.254" layer="94"/>
+<text x="-7.62" y="10.922" size="1.778" layer="95" ratio="12">&gt;NAME</text>
+<text x="-7.62" y="-12.954" size="1.778" layer="96" ratio="12">&gt;VALUE</text>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="HC-SR04" prefix="J_ULTRASONIC_">
+<description>Ultrasonic Sensor HC-SR04</description>
+<gates>
+<gate name="J_ULTRASONIC" symbol="HC-SR04_SYMBOL" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="HC-SR04_FOOTPRINT">
+<connects>
+<connect gate="J_ULTRASONIC" pin="5V" pad="VCC"/>
+<connect gate="J_ULTRASONIC" pin="ECHO" pad="ECHO"/>
+<connect gate="J_ULTRASONIC" pin="GND" pad="GND"/>
+<connect gate="J_ULTRASONIC" pin="TRIG" pad="TRIG"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -8259,6 +8316,7 @@ Source: MaxStream, Inc. xbee_productmanual.pdf</description>
 <part name="LED2" library="led" library_urn="urn:adsk.eagle:library:259" deviceset="LED" device="5MM" package3d_urn="urn:adsk.eagle:package:15799/2"/>
 <part name="LED3" library="led" library_urn="urn:adsk.eagle:library:259" deviceset="LED" device="5MM" package3d_urn="urn:adsk.eagle:package:15799/2"/>
 <part name="XB1" library="maxstream" library_urn="urn:adsk.eagle:library:270" deviceset="XBEE" device="" package3d_urn="urn:adsk.eagle:package:18007/1"/>
+<part name="J_ULTRASONIC_1" library="Ultrasonic Sensor HC-SR04" deviceset="HC-SR04" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -8300,6 +8358,10 @@ Source: MaxStream, Inc. xbee_productmanual.pdf</description>
 <instance part="XB1" gate="G$1" x="149.86" y="45.72" smashed="yes">
 <attribute name="NAME" x="137.16" y="74.93" size="1.778" layer="95"/>
 <attribute name="VALUE" x="137.16" y="12.7" size="1.778" layer="96"/>
+</instance>
+<instance part="J_ULTRASONIC_1" gate="J_ULTRASONIC" x="22.86" y="124.46" smashed="yes">
+<attribute name="NAME" x="15.24" y="135.382" size="1.778" layer="95" ratio="12"/>
+<attribute name="VALUE" x="15.24" y="111.506" size="1.778" layer="96" ratio="12"/>
 </instance>
 </instances>
 <busses>
@@ -8379,26 +8441,6 @@ Source: MaxStream, Inc. xbee_productmanual.pdf</description>
 <wire x1="124.46" y1="91.44" x2="132.08" y2="91.44" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$10" class="0">
-<segment>
-<pinref part="LED2" gate="G$1" pin="C"/>
-<wire x1="139.7" y1="106.68" x2="144.78" y2="106.68" width="0.1524" layer="91"/>
-<pinref part="LED1" gate="G$1" pin="C"/>
-<wire x1="144.78" y1="106.68" x2="144.78" y2="99.06" width="0.1524" layer="91"/>
-<wire x1="144.78" y1="99.06" x2="139.7" y2="99.06" width="0.1524" layer="91"/>
-<pinref part="LED3" gate="G$1" pin="C"/>
-<wire x1="139.7" y1="91.44" x2="144.78" y2="91.44" width="0.1524" layer="91"/>
-<wire x1="144.78" y1="91.44" x2="144.78" y2="99.06" width="0.1524" layer="91"/>
-<junction x="144.78" y="99.06"/>
-<junction x="144.78" y="106.68"/>
-<wire x1="144.78" y1="106.68" x2="144.78" y2="142.24" width="0.1524" layer="91"/>
-<wire x1="144.78" y1="142.24" x2="43.18" y2="142.24" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="142.24" x2="43.18" y2="116.84" width="0.1524" layer="91"/>
-<pinref part="U1" gate="G$1" pin="AGND"/>
-<wire x1="45.72" y1="114.3" x2="43.18" y2="114.3" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="114.3" x2="43.18" y2="116.84" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$11" class="0">
 <segment>
 <pinref part="U1" gate="G$1" pin="VCC_1"/>
@@ -8410,6 +8452,11 @@ Source: MaxStream, Inc. xbee_productmanual.pdf</description>
 <pinref part="XB1" gate="G$1" pin="VCC"/>
 <wire x1="121.92" y1="81.28" x2="121.92" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="121.92" y1="71.12" x2="134.62" y2="71.12" width="0.1524" layer="91"/>
+<pinref part="J_ULTRASONIC_1" gate="J_ULTRASONIC" pin="5V"/>
+<wire x1="10.16" y1="116.84" x2="7.62" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="116.84" x2="7.62" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="104.14" x2="33.02" y2="104.14" width="0.1524" layer="91"/>
+<junction x="33.02" y="104.14"/>
 </segment>
 </net>
 <net name="N$12" class="0">
@@ -8441,6 +8488,54 @@ Source: MaxStream, Inc. xbee_productmanual.pdf</description>
 <wire x1="129.54" y1="27.94" x2="129.54" y2="55.88" width="0.1524" layer="91"/>
 <pinref part="XB1" gate="G$1" pin="DIN/!CONFIG"/>
 <wire x1="129.54" y1="55.88" x2="134.62" y2="55.88" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$16" class="0">
+<segment>
+<pinref part="J_ULTRASONIC_1" gate="J_ULTRASONIC" pin="GND"/>
+<wire x1="10.16" y1="132.08" x2="5.08" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="5.08" y1="132.08" x2="5.08" y2="142.24" width="0.1524" layer="91"/>
+<pinref part="LED2" gate="G$1" pin="C"/>
+<wire x1="139.7" y1="106.68" x2="144.78" y2="106.68" width="0.1524" layer="91"/>
+<pinref part="LED1" gate="G$1" pin="C"/>
+<wire x1="144.78" y1="106.68" x2="144.78" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="99.06" x2="139.7" y2="99.06" width="0.1524" layer="91"/>
+<pinref part="LED3" gate="G$1" pin="C"/>
+<wire x1="139.7" y1="91.44" x2="144.78" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="91.44" x2="144.78" y2="99.06" width="0.1524" layer="91"/>
+<junction x="144.78" y="99.06"/>
+<junction x="144.78" y="106.68"/>
+<wire x1="144.78" y1="106.68" x2="144.78" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="142.24" x2="43.18" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="142.24" x2="43.18" y2="114.3" width="0.1524" layer="91"/>
+<pinref part="U1" gate="G$1" pin="AGND"/>
+<wire x1="45.72" y1="114.3" x2="43.18" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="5.08" y1="142.24" x2="43.18" y2="142.24" width="0.1524" layer="91"/>
+<junction x="43.18" y="142.24"/>
+</segment>
+</net>
+<net name="N$10" class="0">
+<segment>
+<pinref part="U1" gate="G$1" pin="(RXD1/INT2)PD2"/>
+<wire x1="106.68" y1="55.88" x2="109.22" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="109.22" y1="55.88" x2="109.22" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="109.22" y1="144.78" x2="2.54" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="2.54" y1="144.78" x2="2.54" y2="127" width="0.1524" layer="91"/>
+<pinref part="J_ULTRASONIC_1" gate="J_ULTRASONIC" pin="ECHO"/>
+<wire x1="2.54" y1="127" x2="10.16" y2="127" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$15" class="0">
+<segment>
+<pinref part="J_ULTRASONIC_1" gate="J_ULTRASONIC" pin="TRIG"/>
+<wire x1="10.16" y1="121.92" x2="0" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="0" y1="121.92" x2="0" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="0" y1="147.32" x2="157.48" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="157.48" y1="147.32" x2="157.48" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="157.48" y1="76.2" x2="111.76" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="111.76" y1="76.2" x2="111.76" y2="58.42" width="0.1524" layer="91"/>
+<pinref part="U1" gate="G$1" pin="(TXD1/INT3)PD3"/>
+<wire x1="111.76" y1="58.42" x2="106.68" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
