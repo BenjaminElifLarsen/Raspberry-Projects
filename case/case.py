@@ -48,7 +48,7 @@ while(True):
         data = message.data
         remote = message.remote_device
         print("Remote: ")
-        print(remote)
+        print(remote + ".")
         if remote == "0013A2004106F9FC -":
             mes = data.decode()
             print("Got data: ")
