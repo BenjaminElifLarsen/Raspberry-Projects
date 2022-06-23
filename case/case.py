@@ -46,7 +46,7 @@ while(True):
     message = device.read_data()
     if message != None: #check if the message is from a trusted MAC.
         data = message.data
-        remote = message.remote_device.get_64bit_addr().address.decode('ISO-8859-1')
+        remote = message.remote_device.get_64bit_addr().address.decode('utf16')
         print("Remote: ")
         print(remote)
         print(type(remote))
