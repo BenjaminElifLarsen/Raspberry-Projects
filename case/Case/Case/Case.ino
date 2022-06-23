@@ -39,12 +39,12 @@ volatile float temperature = 0;
  
 #define ECHO_PORT "2E"
 #define ECHO_BIT 4 //bit //PE4 // D2
-int ECHO = 2; //only here because of PulseIn function call
+int ECHO = 2; 
 #define TRIG_PORT "2E" 
 #define TRIG_BIT 3 //bit //PE5 // D3
 int TRIG = 3;
 
-#define RANGE_MIN 10
+#define RANGE_MIN 20
 #define RANGE_MAX 100
 
 #define IDLE_LED 53
@@ -87,7 +87,7 @@ void PermitRead(void)
 
 int ReadHCSR04(void)
 {
-	digitalWrite(TRIG, 0); //convert to c 
+	digitalWrite(TRIG, 0);
 	//PortManipulation(TRIG_PORT, TRIG_BIT, 0);
 	delayMicroseconds(2);
 	digitalWrite(TRIG, 1);
@@ -141,21 +141,21 @@ void TemperatureHandling(void)
 
 void TransmitTemperature(void)
 {
-	//Xbee call
 	XBeeAddress64 addr64 = XBeeAddress64(ADDRESS_HIGH,ADDRESS_LOW);
 
 	char tempChar[7];
 	dtostrf(temperature, 4, 4, tempChar);
 
 	uint8_t payload[7];
-	for (int i = 0; i < sizeof(payload); i++) {
+	for (int i = 0; i < sizeof(payload); i++) 
+	{
 		payload[i] = tempChar[i];
 	}
+
 	ZBTxRequest zbTx = ZBTxRequest(addr64,payload, sizeof(payload));
 	xbee.send(zbTx);
-	if (!xbee.readPacket(2500)) {
-
-		//how to handle the error
+	if (!xbee.readPacket(2500)) 
+	{
 		uint8_t error = xbee.getResponse().getErrorCode();
 		printf("Error: " + error);
 	}
@@ -222,7 +222,9 @@ void setup()
 	////PortManipulation("25", 3, 1);
 	//pinMode(TRIG, OUTPUT); //move over to C code later
 	////PortManipulation(ECHO_PORT, ECHO_BIT, 1);
-	//pinMode(ECHO, INPUT);
+	//pinMode(ECHO, INPUT); 
+	pinMode(TRIG, OUTPUT);
+    pinMode(ECHO, INPUT);
 	CanReadHC = true;
 	fdevopen(&my_putc, 0);
 	xbee.setSerial(XBEE_SERIAL);
