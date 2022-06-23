@@ -2,7 +2,8 @@
 #include <XBee.h>
 #include <Printers.h>
 
-//#define USE_SERIAL Serial2
+#define USE_SERIAL Serial2
+#define XBEE_SERIAL Serial //could redirect to another Serial
 
 #include <Ticker.h>
 
@@ -12,6 +13,8 @@
 #include "SoftwareSerial.h"
 #include "avr8-stub.h"
 #include "app_api.h"
+
+XBee xbee = XBee();
 
 void ChangeState(void);
 void PermitRead(void);
@@ -44,11 +47,18 @@ int TRIG = 3;
 #define RANGE_MIN 10
 #define RANGE_MAX 100
 
+#define IDLE_LED 53
+#define TEMPERATURE_LED 52
+#define TRANSMITTING_LED 51
+
+#define ADDRESS_HIGH 0x0013A200
+#define ADDRESS_LOW 0x4155b982
+
 static volatile bool EndOfStateMachine = false;
 
 int my_putc(char c, FILE* t)
 {
-	//USE_SERIAL.write(c);
+	USE_SERIAL.write(c);
 }
 
 void IdleState(void)
@@ -91,11 +101,12 @@ int ReadHCSR04(void)
 
 void DistanceHandling(void)
 {
+	LedSwitch(IDLE_LED, 1);
 	while (IDLE == State && true == CanReadHC) 
 	{
 		TimerUpdates();
 		int distance = ReadHCSR04();
-		if (10 <= distance && 100 >= distance)
+		if (RANGE_MIN <= distance && RANGE_MAX >= distance)
 		{
 			CanReadHC = false;
 			timerRead.start();
@@ -107,10 +118,9 @@ void DistanceHandling(void)
 				timerTemp.stop();
 				TimerTempActive = false;
 			}
-			//ChangeState(); //replace with activating a timer on an interrupt. The current call is just for testing.
-			//have another time that need to be run ones before it is possible to deactivate the first timer.
 		}
 	}
+	LedSwitch(IDLE_LED, 0);
 }
 
 float ReadTemperature(void) 
@@ -122,20 +132,35 @@ float ReadTemperature(void)
 
 void TemperatureHandling(void)
 {
+	LedSwitch(TEMPERATURE_LED, 1);
 	State = READING_TEMPERATURE;
 	temperature = ReadTemperature();
 	ChangeState();
+	LedSwitch(TEMPERATURE_LED, 0);
 }
 
 void TransmitTemperature(void)
 {
 	//Xbee call
+	XBeeAddress64 addr64 = XBeeAddress64(ADDRESS_HIGH,ADDRESS_LOW);
+	uint8_t payload[] = { (uint8_t)temperature };
+	ZBTxRequest zbTx = ZBTxRequest(addr64,payload, sizeof(payload));
+	xbee.send(zbTx);
+	if (!xbee.readPacket(2500)) {
+
+		//how to handle the error
+		uint8_t error = xbee.getResponse().getErrorCode();
+		printf("Error: " + error);
+	}
+
 }
 
 void DataTransmission(void)
 {
+	LedSwitch(TRANSMITTING_LED, 1);
 	TransmitTemperature();
 	ChangeState();
+	LedSwitch(TRANSMITTING_LED, 0);
 }
 
 const MachineStateStruct PROGMEM MachineStateStructArray[] =
@@ -173,16 +198,27 @@ MachineStateStruct* StateAllocateMemoryInRamAndGetCopyFromFlashProm()
 //	}
 //}
 
+void LedSwitch(int pin, bool on) 
+{
+	digitalWrite(pin, on);
+}
+
 void setup() 
 {
-	//USE_SERIAL.begin(9600);
+	XBEE_SERIAL.begin(9600);
+	USE_SERIAL.begin(9600);
 	debug_init();
 	delay(3000);
+	pinMode(IDLE_LED, 1);
+	pinMode(TEMPERATURE_LED, 1);
+	pinMode(TRANSMITTING_LED, 1);
 	////PortManipulation("25", 3, 1);
 	//pinMode(TRIG, OUTPUT); //move over to C code later
 	////PortManipulation(ECHO_PORT, ECHO_BIT, 1);
 	//pinMode(ECHO, INPUT);
 	CanReadHC = true;
+	fdevopen(&my_putc, 0);
+	xbee.setSerial(XBEE_SERIAL);
 }
 
 void loop() 
